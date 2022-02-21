@@ -1,0 +1,21 @@
+{
+  "manifest_version":2,
+  "version":"1.0",
+  "name": "Accessibility_extension",
+  "browser_action": {
+    "default_icon": "./settings.png",
+    "browser_style": true,
+    "default_popup": "popup/index.html"
+  },
+  "permissions": [
+    "<all_urls>",
+    "tabs",
+    "storage"
+  ],
+  "content_scripts":[
+    {
+      "matches":["<all_urls>"],
+      "js":["main.js"]
+    }
+  ]
+}
