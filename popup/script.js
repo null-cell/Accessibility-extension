@@ -1,10 +1,21 @@
-var currQuestion = -1
+let currQuestion = -1
 const b1 = document.getElementById("1")
 const b2 = document.getElementById("2")
 const b3 = document.getElementById("3")
 const b4 = document.getElementById("4")
 const b5 = document.getElementById("5")
 const b6 = document.getElementById("6")
+const b7 = document.getElementById("7")
+const b8 = document.getElementById("8")
+const b9 = document.getElementById("9")
+const b10 = document.getElementById("10")
+const b11 = document.getElementById("11")
+const b12 = document.getElementById("12")
+const b13 = document.getElementById("13")
+const b14 = document.getElementById("14")
+const b15 = document.getElementById("15")
+let highlightedQ = -1
+let highlightedTF = false
 
 const ynnaGrades = "    <button id=\"g_yes\" class='ynna_button'>Yes</button>\n" +
     "    <button id=\"g_no\" class='ynna_button'>No</button>\n" +
@@ -22,23 +33,41 @@ chrome.storage.local.get("currQuestion", (e)=>{
         currQuestion = -1
     }
 });
+chrome.storage.local.get("highlightedTF", (e)=>{
+    if(e){
+        highlightedTF = e["highlightedTF"]
+    }
+    else{
+        highlightedTF = false
+    }
+});
+chrome.storage.local.get("highlightedQ", (e)=>{
+    if(e){
+        highlightedQ = e["highlightedQ"]
+    }
+    else{
+        highlightedQ = -1
+    }
+});
 
 
 b1.addEventListener("click", (e => {
-        currQuestion = 1
-        chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-        document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-        chrome.tabs.getSelected(null, (tab) => {
-            document.getElementById("content").innerHTML = '<p>Is the page title meaningful: <span style="background-color: red">'+ tab.title + '</span></p>';
-            setYNNAGrades(currQuestion.toString())
-            updateButtonColors()
+    currQuestion = 1
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    chrome.tabs.getSelected(null, (tab) => {
+        document.getElementById("content").innerHTML = '<p>Is the page title meaningful: <span style="background-color: red">'+ tab.title + '</span></p>';
+        setYNNAGrades(currQuestion.toString())
+        updateButtonColors()
 
-        })
+    })
 }))
 
 
 b2.addEventListener("click", (e => {
     currQuestion = 2
+    removeH()
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
 
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
@@ -51,6 +80,7 @@ b2.addEventListener("click", (e => {
 
 b3.addEventListener("click", (e => {
     currQuestion = 3
+    removeH()
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").textContent = "Is the focus visible when navigating by tab key? (the site has not been altered)"
@@ -60,48 +90,85 @@ b3.addEventListener("click", (e => {
 
 b4.addEventListener("click", (e => {
     currQuestion = 4
-
+    removeH()
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = "Are all parts of the site usable by keyboard? (without mouse) <br> <button id='highlighted'></button>"
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setHighlights", changeHighlightText)
+
     })
 
     setYNNAGrades(currQuestion.toString())
     updateButtonColors()
 }))
-function changeHighlightText(high){
-    if(high){
-        document.getElementById("highlighted").textContent = "Highlighted"
 
-    }
-    else{
-        document.getElementById("highlighted").textContent = "Highlight"
-
-    }
-
-}
 
 
 b5.addEventListener("click", (e => {
+
     currQuestion = 5
+    removeH()
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").textContent = "Is the focus visible when navigating by tab key? (the site has not been altered)"
-    setYNNAGrades(currQuestion.toString())
-    updateButtonColors()
-}))
-b6.addEventListener("click", (e => {
-    currQuestion = 6
-    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").textContent = "Is the focus visible when navigating by tab key? (the site has not been altered)"
+    document.getElementById("content").textContent = "Do moving content and animations have a pause button? (the site has not been altered)"
     setYNNAGrades(currQuestion.toString())
     updateButtonColors()
 }))
 
+b6.addEventListener("click", (e => {
+
+    currQuestion = 6
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = " Is there a clear visual distinction between link texts and normal text? <br> <button id='highlighted'></button>"
+    sendMessage("getLinkHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setLinkHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+b7.addEventListener("click", (e => {
+
+    currQuestion = 7
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = " Are the link texts meaningful? <br> <button id='highlighted'></button>"
+    sendMessage("getLinkHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setLinkHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+b8.addEventListener("click", (e => {
+
+    currQuestion = 8
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = " Do all images have a textual alternative? <br> <button id='highlighted'></button>"
+    sendMessage("getImageHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setImageHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function sendMessage(subj, callbackfn = null){
     chrome.tabs.query({
         active: true,
@@ -112,6 +179,33 @@ function sendMessage(subj, callbackfn = null){
             {from: 'popup', subject: subj},
             callbackfn);
     });
+}
+
+function changeHighlightText(high){
+    if(high){
+        document.getElementById("highlighted").textContent = "Highlighted"
+        highlightedQ = currQuestion
+        highlightedTF = true
+        chrome.storage.local.set({"highlightedQ": currQuestion}, function (){});
+        chrome.storage.local.set({"highlightedTF": true}, function (){});
+    }
+    else{
+        document.getElementById("highlighted").textContent = "Highlight"
+        highlightedQ = currQuestion
+        highlightedTF = false
+        chrome.storage.local.set({"highlightedQ": currQuestion}, function (){});
+        chrome.storage.local.set({"highlightedTF": false}, function (){});
+    }
+}
+
+function removeH(){
+    if(highlightedTF && (highlightedQ !== currQuestion)){
+        sendMessage("removeAllHighlights", (e)=>{highlightedTF = e})
+        highlightedQ = currQuestion
+        highlightedTF = false
+        chrome.storage.local.set({"highlightedQ": currQuestion}, function (){});
+        chrome.storage.local.set({"highlightedTF": false}, function (){});
+    }
 }
 
 function retlang(lang){
