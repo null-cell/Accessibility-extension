@@ -2,6 +2,9 @@ var currQuestion = -1
 const b1 = document.getElementById("1")
 const b2 = document.getElementById("2")
 const b3 = document.getElementById("3")
+const b4 = document.getElementById("4")
+const b5 = document.getElementById("5")
+const b6 = document.getElementById("6")
 
 const ynnaGrades = "    <button id=\"g_yes\" class='ynna_button'>Yes</button>\n" +
     "    <button id=\"g_no\" class='ynna_button'>No</button>\n" +
@@ -10,37 +13,116 @@ const g123Grades = "    <button id=\"g_1\" class='g123_button'>1</button>\n" +
     "    <button id=\"g_2\" class='g123_button'>2</button>\n" +
     "    <button id=\"g_3\" class='g123_button'>3</button>"
 
+chrome.storage.local.get("currQuestion", (e)=>{
+    if(e){
+        currQuestion = e["currQuestion"]
+        document.getElementById(currQuestion.toString()).click()
+    }
+    else{
+        currQuestion = -1
+    }
+});
+
 
 b1.addEventListener("click", (e => {
         currQuestion = 1
+        chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
         document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
         chrome.tabs.getSelected(null, (tab) => {
             document.getElementById("content").innerHTML = '<p>Is the page title meaningful: <span style="background-color: red">'+ tab.title + '</span></p>';
-            setYNNAGrades("1")
+            setYNNAGrades(currQuestion.toString())
             updateButtonColors()
 
         })
 }))
 
 
-
-
 b2.addEventListener("click", (e => {
     currQuestion = 2
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    chrome.tabs.getSelected(null, (tab) => {
-        document.getElementById("content").innerHTML = '<p>Is the page title meaningful: <span style="background-color: red">'+ tab.title + '</span></p>';
-        setYNNAGrades("2")
-        updateButtonColors()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
 
-    })
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    sendMessage("getLang", retlang)
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
 }))
+
+
+
 b3.addEventListener("click", (e => {
     currQuestion = 3
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-
-    document.getElementById("content").textContent = "Help"
+    document.getElementById("content").textContent = "Is the focus visible when navigating by tab key? (the site has not been altered)"
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
 }))
+
+b4.addEventListener("click", (e => {
+    currQuestion = 4
+
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = "Are all parts of the site usable by keyboard? (without mouse) <br> <button id='highlighted'></button>"
+    sendMessage("getHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+function changeHighlightText(high){
+    if(high){
+        document.getElementById("highlighted").textContent = "Highlighted"
+
+    }
+    else{
+        document.getElementById("highlighted").textContent = "Highlight"
+
+    }
+
+}
+
+
+b5.addEventListener("click", (e => {
+    currQuestion = 5
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").textContent = "Is the focus visible when navigating by tab key? (the site has not been altered)"
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+b6.addEventListener("click", (e => {
+    currQuestion = 6
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").textContent = "Is the focus visible when navigating by tab key? (the site has not been altered)"
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+
+function sendMessage(subj, callbackfn = null){
+    chrome.tabs.query({
+        active: true,
+        currentWindow: true
+    }, function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {from: 'popup', subject: subj},
+            callbackfn);
+    });
+}
+
+function retlang(lang){
+    if(lang){
+        document.getElementById("content").innerHTML = '<p>Is the page\'s language correctly identified: <span style="background-color: red">' + lang+ '</span></p>';
+    }
+    else{
+        document.getElementById("content").innerHTML = '<p>Is the page\'s language correctly identified: <span style="background-color: red"> "NO LANGUAGE DEFINED"</span></p>';
+    }
+
+}
 
 function updateButtonColors(){
     let currqstr = currQuestion.toString()
