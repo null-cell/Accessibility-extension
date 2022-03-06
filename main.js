@@ -1,5 +1,5 @@
 let highlighted = false
-
+document.body.addEventListener("mousemove", () => {getXYPosition()})
 function greenBorder () {
     this.style.border = "3px solid green";
 }
@@ -45,6 +45,7 @@ function removeAll(){
         }
     }
 }
+
 function  addLinkHighlights(){
     let links = document.querySelectorAll("a")
     for (link of links) {
@@ -74,6 +75,7 @@ function removeLinkHighlights(){
 
     }
 }
+
 function  addImageHighlights(){
     let links = document.querySelectorAll("img")
     for (let link of links) {
@@ -91,17 +93,223 @@ function  addImageHighlights(){
         appendIt.style.zIndex = "1111 !important"
         appendIt.classList.add("appendices")
         link.before(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
-
     }
-
-
-
 }
-
 function removeImageHighlights(){
     document.querySelectorAll("img").forEach((el) => {el.style.border = "none"})
     document.querySelectorAll("div.appendices").forEach(el => el.remove());
 }
+
+function  addVideoHighlights(){
+    document.querySelectorAll("video").forEach((el) => {el.style.border = "3px solid red"})
+}
+function removeVideoHighlights(){
+    document.querySelectorAll("video").forEach((el) => {el.style.border = "none"})
+}
+
+// code from https://stackoverflow.com/questions/9733288/how-to-programmatically-calculate-the-contrast-ratio-between-two-colors
+function luminance(r, g, b) {
+    var a = [r, g, b].map(function (v) {
+        v /= 255;
+        return v <= 0.03928
+            ? v / 12.92
+            : Math.pow( (v + 0.055) / 1.055, 2.4 );
+    });
+    return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+}
+function contrast(rgb1, rgb2) {
+    var lum1 = luminance(rgb1[0], rgb1[1], rgb1[2]);
+    var lum2 = luminance(rgb2[0], rgb2[1], rgb2[2]);
+    var brightest = Math.max(lum1, lum2);
+    var darkest = Math.min(lum1, lum2);
+    return (brightest + 0.05)
+        / (darkest + 0.05);
+}
+
+// code from https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)
+    ] : null;
+}
+function rgbToHex(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function hoverCalc(elem){
+    //alert(JSON.stringify(elem.target))
+    let appendIt = document.getElementById('xy');
+    let style = getComputedStyle(elem.target)
+    appendIt.innerHTML = ""
+    appendIt.innerHTML += "Current element font color: " + style.color + "<br>";
+    if(style.backgroundColor){
+        appendIt.innerHTML += "Current element background color: " + style.backgroundColor + "<br>";
+    }
+    if(style.background){
+        appendIt.innerHTML += "Current element background color: " + style.background + "<br>";
+        //#TODO add calculations of gradient, get the background color of parent elements?
+        // and figure out how to do contrast calcs
+    }
+
+}
+
+// code from http://www.brenz.net/snippets/xy.asp
+var myX, myY, xyOn, myMouseX, myMouseY;
+xyOn = false;
+function getXYPosition(e){
+    myMouseX=(e||event).clientX;
+    myMouseY=(e||event).clientY;
+    if (myMouseX + 100 > document.documentElement.clientWidth) {
+        myX = myMouseX - (myMouseX + 80 - (document.documentElement.clientWidth));
+    } else {
+        myX = myMouseX + 20;
+    }
+    if (myMouseY + 64 > document.documentElement.clientHeight) {
+        myY = myMouseY - (myMouseY + 44 - (document.documentElement.clientHeight));
+    } else {
+        myY = myMouseY + 20;
+    }
+    if (document.documentElement.scrollTop > 0) {
+        myY = myY + document.documentElement.scrollTop;
+        myMouseY = myMouseY + document.documentElement.scrollTop;
+    }
+    document.getElementById('xy').style.top = myY + "px";
+    document.getElementById('xy').style.left = myX + "px";
+    //document.getElementById('xy').innerHTML = "X is " + myMouseX + "<br />Y is " + myMouseY;
+    if (xyOn) {
+        document.getElementById('xy').style.visibility = "visible";
+    } else {
+        document.getElementById('xy').style.visibility = "hidden";
+    }
+}
+function toggleXY() {
+    xyOn = !xyOn;
+    if (!xyOn) {
+        document.getElementById('xy').style.visibility = "hidden";
+    } else {
+        document.getElementById('xy').style.visibility = "visible";
+    }
+}
+
+function  addHoverHighlights(){
+
+    let appendIt = document.createElement('div')
+    appendIt.style.position = "absolute"
+    appendIt.style.zIndex = "10"
+    appendIt.style.left = "0px"
+    appendIt.style.top = "0px"
+    appendIt.style.width = "400px"
+    appendIt.style.visibility = "hidden"
+    appendIt.style.backgroundColor = "#ffffff"
+    appendIt.style.border = "1px solid #66ccff"
+    appendIt.id = "xy"
+    appendIt.textContent = "Hello"
+    document.body.appendChild(appendIt)
+    toggleXY()
+
+    var elems = document.body.getElementsByTagName("*");
+    for (let elem of elems){
+            elem.addEventListener("click", hoverCalc)
+
+    }
+}
+function removeHoverHighlights() {
+    toggleXY()
+    document.querySelectorAll("#xy").forEach(el => el.remove());
+    var elems = document.body.getElementsByTagName("*");
+    // for (let elem of elems){
+    //     elem.removeEventListener("hover", hoverCalc)
+    // }}
+}
+
+function  addHeadingHighlights(){
+    let links = document.querySelectorAll("h1,h2,h3,h4,h5,h6")
+    for (let link of links) {
+        link.style.border = "3px solid red"
+        let appendIt = document.createElement('div');
+        appendIt.textContent = link.tagName
+        appendIt.style.backgroundColor = "red"
+        appendIt.style.color = "white"
+        appendIt.style.minHeight = "30px"
+        appendIt.style.zIndex = "1111 !important"
+        appendIt.classList.add("appendices")
+        link.before(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
+    }
+}
+function removeHeadingHighlights(){
+    document.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach((el) => {el.style.border = "none"})
+    document.querySelectorAll("div.appendices").forEach(el => el.remove());
+}
+
+function  addListHighlights(){
+    let links = document.querySelectorAll("ol,ul,li")
+    for (let link of links) {
+        link.style.border = "3px solid red"
+        let appendIt = document.createElement('div');
+        appendIt.textContent = link.tagName
+        appendIt.style.backgroundColor = "red"
+        appendIt.style.color = "white"
+        appendIt.style.height = "10px"
+        appendIt.style.width = "20px"
+        appendIt.style.zIndex = "1111 !important"
+        appendIt.classList.add("appendices")
+        link.before(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
+    }
+}
+function removeListHighlights(){
+    document.querySelectorAll("ol,ul,li").forEach((el) => {el.style.border = "none"})
+    document.querySelectorAll("div.appendices").forEach(el => el.remove());
+}
+
+function  addLabelHighlights(){
+    let links = document.querySelectorAll("input,textarea")
+    for (let [index, link] of links.entries()) {
+        link.style.border = "3px solid red"
+        let appendIt = document.createElement('div');
+        const selector = "label[for='" + link.id + "']"
+        let specificlabel = document.querySelectorAll(selector)
+        appendIt.style.backgroundColor = "red"
+        appendIt.style.color = "white"
+        appendIt.style.height = "30px"
+        appendIt.style.minWidth = "30px"
+        appendIt.style.zIndex = "1111 !important"
+        appendIt.classList.add("appendices")
+        if(specificlabel.item(0) === null){
+            if(link.id){
+                appendIt.textContent = "No labels for this input element with id: "+link.id
+            }
+            else{
+                appendIt.textContent = "No labels for this input element without an id"
+            }
+        }
+        else{
+            appendIt.textContent = index.toString()
+            specificlabel.forEach((el) => {el.before(appendIt)}) //adds to all labels because each input can have more than one label
+        }
+        link.before(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
+    }
+}
+function removeLabelHighlights(){
+    document.querySelectorAll("input,textarea").forEach((el) => {el.style.border = "none"})
+    document.querySelectorAll("div.appendices").forEach(el => el.remove());
+}
+
+
+function  addFormHighlights(){
+    document.querySelectorAll("form").forEach((el) => {el.style.border = "3px solid red"})
+}
+function removeFormHighlights(){
+    document.querySelectorAll("form").forEach((el) => {el.style.border = "none"})
+}
+
+// function  addZoomHighlights(){
+//     document.body.style.zoom = "400%";
+// }
+// function removeZoomHighlights(){
+//     document.body.style.zoom = "100%";
+// }
+
 
 // Listen for messages from the popup
 chrome.runtime.onMessage.addListener(function (msg, sender, response) {
@@ -148,12 +356,97 @@ chrome.runtime.onMessage.addListener(function (msg, sender, response) {
         }
 
     }
+    else if ((msg.from === 'popup') && (msg.subject === 'setVideoHighlights')) {
+        if(highlighted){
+            removeVideoHighlights()
+            highlighted = false
+            response(highlighted);
+        }
+        else{
+            addVideoHighlights()
+            highlighted = true
+            response(highlighted);
+        }
+
+    }
+    else if ((msg.from === 'popup') && (msg.subject === 'setHoverHighlights')){
+        if(highlighted){
+            removeHoverHighlights()
+            highlighted = false
+            response(highlighted);
+        }
+        else{
+            addHoverHighlights()
+            highlighted = true
+            response(highlighted);
+        }
+    }
+    else if ((msg.from === 'popup') && (msg.subject === 'setHeadingHighlights')){
+        if(highlighted){
+            removeHeadingHighlights()
+            highlighted = false
+            response(highlighted);
+        }
+        else{
+            addHeadingHighlights()
+            highlighted = true
+            response(highlighted);
+        }
+    }
+    else if ((msg.from === 'popup') && (msg.subject === 'setListHighlights')){
+        if(highlighted){
+            removeListHighlights()
+            highlighted = false
+            response(highlighted);
+        }
+        else{
+            addListHighlights()
+            highlighted = true
+            response(highlighted);
+        }
+    }
+    else if ((msg.from === 'popup') && (msg.subject === 'setLabelHighlights')){
+        if(highlighted){
+            removeLabelHighlights()
+            highlighted = false
+            response(highlighted);
+        }
+        else{
+            addLabelHighlights()
+            highlighted = true
+            response(highlighted);
+        }
+    }
+    else if ((msg.from === 'popup') && (msg.subject === 'setFormHighlights')){
+        if(highlighted){
+            removeFormHighlights()
+            highlighted = false
+            response(highlighted);
+        }
+        else{
+            addFormHighlights()
+            highlighted = true
+            response(highlighted);
+        }
+    }
+    // else if ((msg.from === 'popup') && (msg.subject === 'setZoomHighlights')){
+    //     if(highlighted){
+    //         removeZoomHighlights()
+    //         highlighted = false
+    //         response(highlighted);
+    //     }
+    //     else{
+    //         addZoomHighlights()
+    //         highlighted = true
+    //         response(highlighted);
+    //     }
+    // }
     else if ((msg.from === 'popup') && (msg.subject === 'getHighlightStatus')) {
         response(highlighted);
     }
-
     else if((msg.from === 'popup')&&(msg.subject === 'removeAllHighlights')){
         removeAll();
+        xyOn = false
         highlighted = false
         response(highlighted)
 

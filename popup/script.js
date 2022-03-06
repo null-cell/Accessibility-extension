@@ -124,7 +124,7 @@ b6.addEventListener("click", (e => {
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = " Is there a clear visual distinction between link texts and normal text? <br> <button id='highlighted'></button>"
-    sendMessage("getLinkHighlightStatus", changeHighlightText)
+    sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setLinkHighlights", changeHighlightText)
     })
@@ -139,7 +139,7 @@ b7.addEventListener("click", (e => {
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = " Are the link texts meaningful? <br> <button id='highlighted'></button>"
-    sendMessage("getLinkHighlightStatus", changeHighlightText)
+    sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setLinkHighlights", changeHighlightText)
     })
@@ -154,7 +154,7 @@ b8.addEventListener("click", (e => {
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = " Do all images have a textual alternative? <br> <button id='highlighted'></button>"
-    sendMessage("getImageHighlightStatus", changeHighlightText)
+    sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setImageHighlights", changeHighlightText)
     })
@@ -163,7 +163,117 @@ b8.addEventListener("click", (e => {
     updateButtonColors()
 }))
 
+b9.addEventListener("click", (e => {
 
+    currQuestion = 9
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = "Are videos subtitled? <br> <button id='highlighted'></button>"
+    sendMessage("getHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setVideoHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+
+b10.addEventListener("click", (e => {
+
+    currQuestion = 10
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = "#TOFINISH Is there sufficient contrast between the colour of the text and the background colour? <br> <button id='highlighted'></button>"
+    sendMessage("getHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setHoverHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+
+b11.addEventListener("click", (e => {
+
+    currQuestion = 11
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = "Are all headings and subtitles correctly marked with HTML? <br> <button id='highlighted'></button>"
+    sendMessage("getHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setHeadingHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+
+b12.addEventListener("click", (e => {
+
+    currQuestion = 12
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = " Are all lists correctly marked with HTML? <br> <button id='highlighted'></button>"
+    sendMessage("getHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setListHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+
+b13.addEventListener("click", (e => {
+
+    currQuestion = 13
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = " Are form fields linked to their labels? <br> <button id='highlighted'></button>"
+    sendMessage("getHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setLabelHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+
+b14.addEventListener("click", (e => {
+
+    currQuestion = 14
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = " If you make a mistake when completing a form, do you get textual help? <br> <button id='highlighted'></button>"
+    sendMessage("getHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setFormHighlights", changeHighlightText)
+    })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
+
+b15.addEventListener("click", (e => {
+
+    currQuestion = 15
+    removeH()
+    chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
+    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("content").innerHTML = "Do the contents reflow properly when the website is zoomed in up until 400%? <br>" //<button id='highlighted'></button>"
+    // sendMessage("getHighlightStatus", changeHighlightText)
+    // document.getElementById("highlighted").addEventListener("click", (e) => {
+    //     sendMessage("setZoomHighlights", changeHighlightText)
+    // })
+
+    setYNNAGrades(currQuestion.toString())
+    updateButtonColors()
+}))
 
 
 
