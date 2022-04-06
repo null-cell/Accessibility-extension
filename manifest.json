@@ -1,14 +1,13 @@
 {
-  "manifest_version":2,
+  "manifest_version":3,
   "version":"1.0",
   "name": "Accessibility_extension",
-  "browser_action": {
+  "action": {
     "default_icon": "./settings.png",
     "browser_style": true,
     "default_popup": "popup/index.html"
   },
   "permissions": [
-    "<all_urls>",
     "tabs",
     "storage",
     "activeTab",

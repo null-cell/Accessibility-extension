@@ -56,12 +56,12 @@ b1.addEventListener("click", (e => {
     removeH()
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    chrome.tabs.getSelected(null, (tab) => {
+    getCurrentTab().then(tab => {
         document.getElementById("content").innerHTML = '<p>Is the page title meaningful: <span style="background-color: red">'+ tab.title + '</span></p>';
         setYNNAGrades(currQuestion.toString())
         updateButtonColors()
-
     })
+
 }))
 
 
@@ -290,6 +290,13 @@ function sendMessage(subj, callbackfn = null){
             callbackfn);
     });
 }
+
+async function getCurrentTab() {
+    let queryOptions = { active: true, currentWindow: true };
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
+}
+
 
 function changeHighlightText(high){
     if(high){

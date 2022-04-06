@@ -34,7 +34,7 @@ function removeHighlights(){
     }
 }
 function removeAll(){
-    let links = document.querySelectorAll("a,button,input,area,textarea,map,track,video,embed,iframe,datalist,fieldset,details,dialog,summary,img")
+    let links = document.querySelectorAll("a,button,input,area,textarea,map,track,video,embed,iframe,datalist,fieldset,details,dialog,summary,img,li,ul,ol,form,h1,h2,h3,h4,h5,h6")
     for (link of links) {
         link.removeEventListener("focus", greenBorder)
         if(link.style.border === "3px solid green"){
@@ -44,6 +44,8 @@ function removeAll(){
             link.style.border = "none"
         }
     }
+    document.querySelectorAll("div.appendices").forEach(el => el.remove())
+    document.querySelectorAll("#xy").forEach(el => el.remove())
 }
 
 function  addLinkHighlights(){
@@ -217,7 +219,7 @@ function  addHoverHighlights(){
 function removeHoverHighlights() {
     toggleXY()
     document.querySelectorAll("#xy").forEach(el => el.remove());
-    var elems = document.body.getElementsByTagName("*");
+    // var elems = document.body.getElementsByTagName("*");
     // for (let elem of elems){
     //     elem.removeEventListener("hover", hoverCalc)
     // }}
@@ -446,6 +448,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, response) {
     }
     else if((msg.from === 'popup')&&(msg.subject === 'removeAllHighlights')){
         removeAll();
+
         xyOn = false
         highlighted = false
         response(highlighted)
