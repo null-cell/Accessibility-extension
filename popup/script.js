@@ -83,7 +83,12 @@ b3.addEventListener("click", (e => {
     removeH()
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").textContent = "Is the focus visible when navigating by tab key? (the site has not been altered)"
+    document.getElementById("content").innerHTML = "Is the focus visible when navigating by tab key? (the site has not been altered) <br> <button id='highlighted'></button>"
+    sendMessage("getHighlightStatus", changeHighlightText)
+    document.getElementById("highlighted").addEventListener("click", (e) => {
+        sendMessage("setFocusHighlights", changeHighlightText)
+
+    })
     setYNNAGrades(currQuestion.toString())
     updateButtonColors()
 }))
@@ -123,7 +128,8 @@ b6.addEventListener("click", (e => {
     removeH()
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = " Is there a clear visual distinction between link texts and normal text? <br> <button id='highlighted'></button>"
+    document.getElementById("content").innerHTML = " Is there a clear visual distinction between link texts and normal text? (Note that these highlights are meant only to help the grader " +
+        "find the links on the page, after which the grader should remove the highlight and inspect them manually) <br> <button id='highlighted'></button>"
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setLinkHighlights", changeHighlightText)
@@ -138,7 +144,8 @@ b7.addEventListener("click", (e => {
     removeH()
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = " Are the link texts meaningful? <br> <button id='highlighted'></button>"
+    document.getElementById("content").innerHTML = " Are the link texts meaningful? (Note that these highlights are meant only to help the grader " +
+        "find the links on the page, after which the grader should remove the highlight and inspect them manually) <br> <button id='highlighted'></button>"
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setLinkHighlights", changeHighlightText)

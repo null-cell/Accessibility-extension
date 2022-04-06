@@ -1,7 +1,15 @@
 let highlighted = false
-document.body.addEventListener("mousemove", () => {getXYPosition()})
+// document.body.addEventListener("mousemove", () => {getXYPosition()})
 function greenBorder () {
     this.style.border = "3px solid green";
+}
+function redBorderONOFF () {
+    if (this.style.border === "3px solid red"){
+        this.style.border = "none"
+    }
+    else{
+        this.style.border = "3px solid red"
+    }
 }
 function  addHighlights(){
     let links = document.querySelectorAll("a,button,input,area,textarea,map,track,video,embed,iframe,datalist,fieldset,details,dialog,summary")
@@ -33,18 +41,34 @@ function removeHighlights(){
 
     }
 }
+
+function addFocusHighlight(){
+    let elements = document.body.querySelectorAll("*")
+    elements.forEach(el => {
+        el.addEventListener("focusin", redBorderONOFF)
+        el.addEventListener("focusout", redBorderONOFF)
+    })
+}
+function removeFocusHighlight(){
+    let elements = document.body.querySelectorAll("*")
+    elements.forEach(el => {
+        el.removeEventListener("focusin", redBorderONOFF)
+        el.removeEventListener("focusout", redBorderONOFF)
+    })
+}
+
 function removeAll(){
     let links = document.querySelectorAll("a,button,input,area,textarea,map,track,video,embed,iframe,datalist,fieldset,details,dialog,summary,img,li,ul,ol,form,h1,h2,h3,h4,h5,h6")
     for (link of links) {
         link.removeEventListener("focus", greenBorder)
-        if(link.style.border === "3px solid green"){
-            link.style.border = "none"
-        }
-        else{
-            link.style.border = "none"
-        }
+        link.style.border = "none"
+
     }
     document.querySelectorAll("div.appendices").forEach(el => el.remove())
+    document.querySelectorAll("div.wrapper").forEach(el => {
+        let parent = el.parentElement
+        parent.replaceChild(el.children[0],el)
+    });
     document.querySelectorAll("#xy").forEach(el => el.remove())
 }
 
@@ -77,29 +101,62 @@ function removeLinkHighlights(){
 
     }
 }
+function showAt(targetElem, newElem){
+
+
+
+    let wrapper = document.createElement('div')
+    wrapper.style.position = "relative"
+
+    let parent = targetElem.parentElement
+    parent.replaceChild(wrapper, targetElem)
+
+    wrapper.append(targetElem)
+
+    newElem.style.position = "absolute"
+    newElem.style.bottom = "10%"
+    newElem.style.right = "10%"
+
+    wrapper.append(newElem)
+    wrapper.classList.add("wrapper")
+
+}
 
 function  addImageHighlights(){
     let links = document.querySelectorAll("img")
+
+
     for (let link of links) {
+
         link.style.border = "3px solid red"
-        let appendIt = document.createElement('div');
+
+
+        let appendIt = document.createElement('p');
         if(link.alt && link.alt !== ""){
             appendIt.textContent = link.alt
         }
         else{
             appendIt.textContent = "!Missing alt text!"
         }
+        appendIt.style.all = "revert"
         appendIt.style.backgroundColor = "red"
         appendIt.style.color = "white"
-        appendIt.style.minHeight = "30px"
-        appendIt.style.zIndex = "1111 !important"
-        appendIt.classList.add("appendices")
-        link.before(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
+        appendIt.style.fontSize = "2ex"
+        appendIt.style.minHeight = "50px"
+        appendIt.style.minWidth = "100px"
+        appendIt.style.overflow = "visible"
+        appendIt.style.float = "right"
+
+        showAt(link, appendIt)
+
     }
 }
 function removeImageHighlights(){
     document.querySelectorAll("img").forEach((el) => {el.style.border = "none"})
-    document.querySelectorAll("div.appendices").forEach(el => el.remove());
+    document.querySelectorAll("div.wrapper").forEach(el => {
+        let parent = el.parentElement
+        parent.replaceChild(el.children[0],el)
+    });
 }
 
 function  addVideoHighlights(){
@@ -128,6 +185,26 @@ function contrast(rgb1, rgb2) {
         / (darkest + 0.05);
 }
 
+function calculateContrast(){
+    let c1 = document.getElementById("c1")
+    let c2 = document.getElementById("c2")
+
+    let style = c1.value.slice(1)
+    let bgstyle = c2.value.slice(1)
+
+    // alert("https://webaim.org/resources/contrastchecker/?fcolor="+strcolors+"&bcolor="+strbgcolors+"&api");
+    return fetch("https://webaim.org/resources/contrastchecker/?fcolor="+style+"&bcolor="+bgstyle+"&api")
+        .then(async response => {
+            document.getElementById("calcresponse").innerText =  JSON.stringify( await response.json())
+
+        })
+
+/*        .then(response => {
+            return response.close
+        })*/
+
+}
+
 // code from https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -139,25 +216,41 @@ function rgbToHex(r, g, b) {
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
+function getActualBackgroundColor(element){
+    let style = getComputedStyle(element)
+    if (style.backgroundColor.slice(0,4) !== "rgba"){
+        return style.backgroundColor
+    }
+    else{
+        return getActualBackgroundColor(element.parentElement)
+    }
+}
+
 function hoverCalc(elem){
     //alert(JSON.stringify(elem.target))
-    let appendIt = document.getElementById('xy');
+
+    let appendIt = document.getElementById('helem');
     let style = getComputedStyle(elem.target)
     appendIt.innerHTML = ""
-    appendIt.innerHTML += "Current element font color: " + style.color + "<br>";
-    if(style.backgroundColor){
-        appendIt.innerHTML += "Current element background color: " + style.backgroundColor + "<br>";
-    }
-    if(style.background){
-        appendIt.innerHTML += "Current element background color: " + style.background + "<br>";
-        //#TODO add calculations of gradient, get the background color of parent elements?
-        // and figure out how to do contrast calcs
-    }
+    appendIt.innerHTML += "Current element font color: "+style.color + "<br>";
+    appendIt.innerHTML += "Current element background color: " + getActualBackgroundColor(elem.target) + "<br>";
+
+
+    let rgbcolor = style.color.toString()
+    let colors = rgbcolor.split("(")[1].split(")")[0].split(", ").map(el => parseInt(el))
+    let bgrgbcolor = getActualBackgroundColor(elem.target)
+    let bgcolors = bgrgbcolor.split("(")[1].split(")")[0].split(", ").map(el => parseInt(el))
+
+    document.getElementById('c1').value = rgbToHex(colors[0], colors[1], colors[2])
+    document.getElementById('c2').value = rgbToHex(bgcolors[0], bgcolors[1], bgcolors[2])
+
+    elem.preventDefault()
+
 
 }
 
 // code from http://www.brenz.net/snippets/xy.asp
-var myX, myY, xyOn, myMouseX, myMouseY;
+/*var myX, myY, xyOn, myMouseX, myMouseY;
 xyOn = false;
 function getXYPosition(e){
     myMouseX=(e||event).clientX;
@@ -192,12 +285,12 @@ function toggleXY() {
     } else {
         document.getElementById('xy').style.visibility = "visible";
     }
-}
+}*/
 
 function  addHoverHighlights(){
 
-    let appendIt = document.createElement('div')
-    appendIt.style.position = "absolute"
+    let appendIt = document.createElement('header')
+/*    appendIt.style.position = "absolute"
     appendIt.style.zIndex = "10"
     appendIt.style.left = "0px"
     appendIt.style.top = "0px"
@@ -205,21 +298,74 @@ function  addHoverHighlights(){
     appendIt.style.visibility = "hidden"
     appendIt.style.backgroundColor = "#ffffff"
     appendIt.style.border = "1px solid #66ccff"
+    appendIt.id = "xy"*/
+    appendIt.style.position = "fixed !important"
+    appendIt.style.zIndex = "99"
+    appendIt.style.left = "0px !important"
+    appendIt.style.top = "0px !important"
+    appendIt.style.width = "50vw"
+    appendIt.style.height = "20vh"
     appendIt.id = "xy"
-    appendIt.textContent = "Hello"
-    document.body.appendChild(appendIt)
-    toggleXY()
 
-    var elems = document.body.getElementsByTagName("*");
+    let headerElem = document.createElement('div')
+    headerElem.id = "helem"
+    headerElem.textContent = "Click to begin"
+
+    let c1 = document.createElement('input')
+    c1.type = "color"
+    c1.id = "c1"
+    c1.value = "#000000"
+
+    let c1label = document.createElement('label')
+    c1label.setAttribute("for", "c1")
+    c1label.id = "c1label"
+    c1label.innerHTML = "Textcolor <br>"
+
+    let c2 = document.createElement('input')
+    c2.type = "color"
+    c2.id = "c2"
+    c2.value = "#000000"
+
+    let c2label = document.createElement('label')
+    c2label.setAttribute("for", "c2")
+    c2label.innerHTML = "Background color <br>"
+    c2label.id = "c2label"
+
+    let calcbutton = document.createElement('button')
+    calcbutton.id = "calcbutton"
+    calcbutton.innerText = "Calculate contrast"
+    calcbutton.addEventListener("click", calculateContrast)
+
+    let calcresponse = document.createElement("div")
+    calcresponse.innerText =""
+    calcresponse.id = "calcresponse"
+
+
+    appendIt.addEventListener("hover", el => el.preventDefault())
+    appendIt.appendChild(headerElem)
+    appendIt.appendChild(c1)
+    appendIt.appendChild(c1label)
+    appendIt.appendChild(c2)
+    appendIt.appendChild(c2label)
+    appendIt.appendChild(calcbutton)
+    appendIt.appendChild(calcresponse)
+    document.body.prepend(appendIt)
+
+    // toggleXY()
+
+    var elems = document.body.querySelectorAll("*");
     for (let elem of elems){
+        if(!["xy","helem","c1","c1label","c2","c2label","calcbutton","calcresponse"].includes(elem.id)){
             elem.addEventListener("click", hoverCalc)
+        }
 
     }
 }
 function removeHoverHighlights() {
-    toggleXY()
+    // toggleXY()
     document.querySelectorAll("#xy").forEach(el => el.remove());
-    // var elems = document.body.getElementsByTagName("*");
+    var elems = document.body.getElementsByTagName("*")
+    document.body.querySelectorAll("*").forEach(elem => elem.removeEventListener("click", hoverCalc))
     // for (let elem of elems){
     //     elem.removeEventListener("hover", hoverCalc)
     // }}
@@ -234,33 +380,42 @@ function  addHeadingHighlights(){
         appendIt.style.backgroundColor = "red"
         appendIt.style.color = "white"
         appendIt.style.minHeight = "30px"
+        appendIt.style.borderRadius = "15px"
         appendIt.style.zIndex = "1111 !important"
-        appendIt.classList.add("appendices")
-        link.before(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
+        showAt(link,appendIt)
     }
 }
 function removeHeadingHighlights(){
     document.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach((el) => {el.style.border = "none"})
-    document.querySelectorAll("div.appendices").forEach(el => el.remove());
+    document.querySelectorAll("div.wrapper").forEach(el => {
+        let parent = el.parentElement
+        parent.replaceChild(el.children[0],el)
+    });
 }
 
 function  addListHighlights(){
-    let links = document.querySelectorAll("ol,ul,li")
+    let links = document.querySelectorAll("ol,ul")
     for (let link of links) {
         link.style.border = "3px solid red"
         let appendIt = document.createElement('div');
         appendIt.textContent = link.tagName
         appendIt.style.backgroundColor = "red"
         appendIt.style.color = "white"
-        appendIt.style.height = "10px"
-        appendIt.style.width = "20px"
+        appendIt.style.minHeight = "10px"
+        appendIt.style.minWidth = "20px"
         appendIt.style.zIndex = "1111 !important"
+        appendIt.style.position = "absolute"
+        appendIt.style.top = "0px !important"
+        appendIt.style.left = "0px !important"
+        appendIt.style.margin = "0px !important"
+        appendIt.style.padding = "0px !important"
+
         appendIt.classList.add("appendices")
-        link.before(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
+        link.appendChild(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
     }
 }
 function removeListHighlights(){
-    document.querySelectorAll("ol,ul,li").forEach((el) => {el.style.border = "none"})
+    document.querySelectorAll("ol,ul").forEach((el) => {el.style.border = "none"})
     document.querySelectorAll("div.appendices").forEach(el => el.remove());
 }
 
@@ -268,13 +423,14 @@ function  addLabelHighlights(){
     let links = document.querySelectorAll("input,textarea")
     for (let [index, link] of links.entries()) {
         link.style.border = "3px solid red"
-        let appendIt = document.createElement('div');
+        let appendIt = document.createElement('p');
         const selector = "label[for='" + link.id + "']"
         let specificlabel = document.querySelectorAll(selector)
         appendIt.style.backgroundColor = "red"
         appendIt.style.color = "white"
         appendIt.style.height = "30px"
         appendIt.style.minWidth = "30px"
+        appendIt.style.maxWidth = "100px"
         appendIt.style.zIndex = "1111 !important"
         appendIt.classList.add("appendices")
         if(specificlabel.item(0) === null){
@@ -287,9 +443,10 @@ function  addLabelHighlights(){
         }
         else{
             appendIt.textContent = index.toString()
-            specificlabel.forEach((el) => {el.before(appendIt)}) //adds to all labels because each input can have more than one label
+            specificlabel.forEach((el) => {showAt(el, appendIt.cloneNode(true)); el.style.border = "3px solid red"}) //adds to all labels because each input can have more than one label
         }
-        link.before(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
+
+        showAt(link,appendIt.cloneNode(true)) //#TODO change this with absolute positioning with regards to the x,y,window width and height
     }
 }
 function removeLabelHighlights(){
@@ -318,6 +475,19 @@ chrome.runtime.onMessage.addListener(function (msg, sender, response) {
     // First, validate the message's structure
     if ((msg.from === 'popup') && (msg.subject === 'getLang')) {
         response(document.getElementsByTagName("html")[0].lang);
+    }
+    else if ((msg.from === 'popup') && (msg.subject === 'setFocusHighlights')) {
+        if(highlighted){
+            removeFocusHighlight()
+            highlighted = false
+            response(highlighted);
+        }
+        else{
+            addFocusHighlight()
+            highlighted = true
+            response(highlighted);
+        }
+
     }
     else if ((msg.from === 'popup') && (msg.subject === 'setHighlights')) {
         if(highlighted){
@@ -448,10 +618,11 @@ chrome.runtime.onMessage.addListener(function (msg, sender, response) {
     }
     else if((msg.from === 'popup')&&(msg.subject === 'removeAllHighlights')){
         removeAll();
-
-        xyOn = false
+        removeFocusHighlight()
+        // xyOn = false
         highlighted = false
         response(highlighted)
 
     }
 });
+
