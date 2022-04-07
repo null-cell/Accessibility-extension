@@ -3,14 +3,7 @@ let highlighted = false
 function greenBorder () {
     this.style.border = "3px solid green";
 }
-function redBorderONOFF () {
-    if (this.style.border === "3px solid red"){
-        this.style.border = "none"
-    }
-    else{
-        this.style.border = "3px solid red"
-    }
-}
+
 function  addHighlights(){
     let links = document.querySelectorAll("a,button,input,area,textarea,map,track,video,embed,iframe,datalist,fieldset,details,dialog,summary")
     for (link of links) {
@@ -41,19 +34,30 @@ function removeHighlights(){
 
     }
 }
+function redBorderON () {
+    this.style.counterReset = this.style.border
+    this.style.border = "8px solid red"
 
+
+}
+function redBorderOFF () {
+    if (this.style.border === "8px solid red"){
+        this.style.border = this.style.counterReset
+    }
+
+}
 function addFocusHighlight(){
     let elements = document.body.querySelectorAll("*")
     elements.forEach(el => {
-        el.addEventListener("focusin", redBorderONOFF)
-        el.addEventListener("focusout", redBorderONOFF)
+        el.addEventListener("focus", redBorderON)
+        el.addEventListener("focusout", redBorderOFF)
     })
 }
 function removeFocusHighlight(){
     let elements = document.body.querySelectorAll("*")
     elements.forEach(el => {
-        el.removeEventListener("focusin", redBorderONOFF)
-        el.removeEventListener("focusout", redBorderONOFF)
+        el.removeEventListener("focus", redBorderON)
+        el.removeEventListener("focusout", redBorderOFF)
     })
 }
 
@@ -69,6 +73,9 @@ function removeAll(){
         let parent = el.parentElement
         parent.replaceChild(el.children[0],el)
     });
+    document.querySelectorAll("li.appendices").forEach(el => el.remove())
+    document.querySelectorAll("label.appendices").forEach(el => el.remove())
+    document.querySelectorAll("span.appendices").forEach(el => el.remove())
     document.querySelectorAll("#xy").forEach(el => el.remove())
 }
 
@@ -397,33 +404,39 @@ function  addListHighlights(){
     let links = document.querySelectorAll("ol,ul")
     for (let link of links) {
         link.style.border = "3px solid red"
-        let appendIt = document.createElement('div');
+        let appendIt = link.children[0].cloneNode(false); //now creates the tag as a li node in the list to consistently show up in all css frameworks
+        if(!link.children[0].value) link.children[0].value = 1 //remove this if ol's start with not 1?
         appendIt.textContent = link.tagName
         appendIt.style.backgroundColor = "red"
         appendIt.style.color = "white"
         appendIt.style.minHeight = "10px"
         appendIt.style.minWidth = "20px"
+        appendIt.style.listStyle = "none"
+        appendIt.style.listStyleType = "none"
+/*
         appendIt.style.zIndex = "1111 !important"
         appendIt.style.position = "absolute"
         appendIt.style.top = "0px !important"
         appendIt.style.left = "0px !important"
         appendIt.style.margin = "0px !important"
         appendIt.style.padding = "0px !important"
+*/
 
         appendIt.classList.add("appendices")
-        link.appendChild(appendIt) //#TODO change this with absolute positioning with regards to the x,y,window width and height
+        link.prepend(appendIt) //properly places the li element
     }
 }
 function removeListHighlights(){
     document.querySelectorAll("ol,ul").forEach((el) => {el.style.border = "none"})
-    document.querySelectorAll("div.appendices").forEach(el => el.remove());
+    document.querySelectorAll("li.appendices").forEach(el => el.remove());
 }
 
-function  addLabelHighlights(){
+function  addLabelHighlights(){ //should we leave out the hidden input areas?
     let links = document.querySelectorAll("input,textarea")
     for (let [index, link] of links.entries()) {
+        link.style.counterReset = link.style.border
         link.style.border = "3px solid red"
-        let appendIt = document.createElement('p');
+        let appendIt = document.createElement('label');
         const selector = "label[for='" + link.id + "']"
         let specificlabel = document.querySelectorAll(selector)
         appendIt.style.backgroundColor = "red"
@@ -433,8 +446,23 @@ function  addLabelHighlights(){
         appendIt.style.maxWidth = "100px"
         appendIt.style.zIndex = "1111 !important"
         appendIt.classList.add("appendices")
+
         if(specificlabel.item(0) === null){
-            if(link.id){
+
+            if(link.getAttribute("aria-label")){
+                appendIt.textContent = "Labelled by aria-label "+index.toString()
+                let labelledby = document.querySelector(link.getAttribute("aria-label"))
+
+            }
+            else if (link.getAttribute("aria-labelledby")){
+                appendIt.textContent = "Labelled by aria-labelledby "+index.toString()
+
+            }
+            else if(link.title){
+                appendIt.textContent = "Labelled by title "+index.toString()
+
+            }
+            else if(link.id){
                 appendIt.textContent = "No labels for this input element with id: "+link.id
             }
             else{
@@ -443,23 +471,38 @@ function  addLabelHighlights(){
         }
         else{
             appendIt.textContent = index.toString()
-            specificlabel.forEach((el) => {showAt(el, appendIt.cloneNode(true)); el.style.border = "3px solid red"}) //adds to all labels because each input can have more than one label
+            specificlabel.forEach((el) => {
+                let x = document.createElement('label')
+                x.style.backgroundColor = "red"
+                x.style.color = "white"
+                x.style.height = "30px"
+                x.style.minWidth = "30px"
+                x.style.maxWidth = "100px"
+                x.style.zIndex = "1111 !important"
+                x.classList.add("appendices")
+                x.for = el.id
+                x.textContent = appendIt.textContent
+                el.after(x)
+            }) //adds to all labels because each input can have more than one label
         }
-
-        showAt(link,appendIt.cloneNode(true)) //#TODO change this with absolute positioning with regards to the x,y,window width and height
+        appendIt.for = link.id
+        link.before(appendIt)
     }
 }
 function removeLabelHighlights(){
-    document.querySelectorAll("input,textarea").forEach((el) => {el.style.border = "none"})
-    document.querySelectorAll("div.appendices").forEach(el => el.remove());
+    document.querySelectorAll("input,textarea").forEach((el) => {el.style.border = el.style.counterReset; el.style.removeProperty("counter-reset")})
+    document.querySelectorAll("label.appendices").forEach(el => el.remove());
 }
 
 
 function  addFormHighlights(){
-    document.querySelectorAll("form").forEach((el) => {el.style.border = "3px solid red"})
+    document.querySelectorAll("form").forEach((el) => {
+        el.style.counterReset = el.style.border
+        el.style.border = "3px solid red"
+    })
 }
 function removeFormHighlights(){
-    document.querySelectorAll("form").forEach((el) => {el.style.border = "none"})
+    document.querySelectorAll("form").forEach((el) => {el.style.border = el.style.counterReset; el.style.removeProperty("counter-reset")})
 }
 
 // function  addZoomHighlights(){
