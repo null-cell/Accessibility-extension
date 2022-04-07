@@ -1,43 +1,86 @@
 <!DOCTYPE HTML>
 <head>
-
+    <style>
+        body{
+            width: 500px;
+            background-color: #dceed1;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        .nav-wrapper{
+            width: 100%;
+            height: 3ex;
+            padding: 0;
+            margin: 0;
+        }
+        .navigation{
+            width: 6%;
+            background-color: #dceed1;
+            border: 1px solid #736372;
+            color: #736372;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        .navigation:hover{
+            color: #dceed1;
+            background-color: #7A918D;
+            text-decoration: underline;
+        }
+        .highlightnav{
+            color: #dceed1;
+            background-color: #7A918D;
+            text-decoration: underline;
+        }
+        .content{
+            flex: 1 0 auto;
+        }
+        .footer{
+            flex-shrink: 0;
+        }
+    </style>
     <title>Extension title</title>
 </head>
-<body style="width: 500px">
-<button id="1">1</button>
-<button id="2">2</button>
-<button id="3">3</button>
-<button id="4">4</button>
-<button id="5">5</button>
-<button id="6">6</button>
-<button id="7">7</button>
-<button id="8">8</button>
-<button id="9">9</button>
-<button id="10">10</button>
-<button id="11">11</button>
-<button id="12">12</button>
-<button id="13">13</button>
-<button id="14">14</button>
-<button id="15">15</button>
+<body style="">
+<div class="nav-wrapper">
+    <button class="navigation" id="1">1</button>
+    <button class="navigation" id="2">2</button>
+    <button class="navigation" id="3">3</button>
+    <button class="navigation" id="4">4</button>
+    <button class="navigation" id="5">5</button>
+    <button class="navigation" id="6">6</button>
+    <button class="navigation" id="7">7</button>
+    <button class="navigation" id="8">8</button>
+    <button class="navigation" id="9">9</button>
+    <button class="navigation" id="10">10</button>
+    <button class="navigation" id="11">11</button>
+    <button class="navigation" id="12">12</button>
+    <button class="navigation" id="13">13</button>
+    <button class="navigation" id="14">14</button>
+    <button class="navigation" id="15">15</button>
+</div>
+<div class="content">
+    <h2 id="currQuestion">Select a question above to begin</h2>
 
-<h2 id="currQuestion">Select a question above to begin</h2>
-
-<p id="content">
-    The question contents will show here
-</p>
-<div id="grades">
+    <p id="content">
+        The question contents will show here
+    </p>
+    <div id="grades">
 
 
+    </div>
 </div>
 
-<hr>
-<button id="showlocalstorage">Show local storage</button>
-<div id="localstorage">
+<div class="footer">
+    <hr>
+    <button id="showlocalstorage">Show local storage</button>
+    <div id="localstorage">
 
+    </div>
+    <hr>
+    <button id="clearquestionstorage">Clear current question storage</button>
+    <button id="clearallstorage">Clear all local storage</button>
 </div>
-<hr>
-<button id="clearquestionstorage">Clear current question storage</button>
-<button id="clearallstorage">Clear all local storage</button>
 
 <script src="script.js"></script>
 </body>

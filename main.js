@@ -296,7 +296,7 @@ function toggleXY() {
 
 function  addHoverHighlights(){
 
-    let appendIt = document.createElement('header')
+    let appendIt = document.createElement('div')
 /*    appendIt.style.position = "absolute"
     appendIt.style.zIndex = "10"
     appendIt.style.left = "0px"
@@ -306,12 +306,16 @@ function  addHoverHighlights(){
     appendIt.style.backgroundColor = "#ffffff"
     appendIt.style.border = "1px solid #66ccff"
     appendIt.id = "xy"*/
-    appendIt.style.position = "fixed !important"
-    appendIt.style.zIndex = "99"
-    appendIt.style.left = "0px !important"
-    appendIt.style.top = "0px !important"
-    appendIt.style.width = "50vw"
-    appendIt.style.height = "20vh"
+    appendIt.style.position = "absolute"
+    appendIt.style.backgroundColor = "white"
+    appendIt.style.fontSize = "15px"
+    appendIt.style.zIndex = "99999"
+    appendIt.style.left = window.scrollX.toString()+"px "
+    appendIt.style.top = (window.scrollY + 500).toString()+"px"
+    appendIt.style.width = "400px"
+    appendIt.style.height = "250px"
+    appendIt.style.overflowWrap = "anywhere"
+    appendIt.style.border = "3px solid red"
     appendIt.id = "xy"
 
     let headerElem = document.createElement('div')
@@ -388,7 +392,7 @@ function  addHeadingHighlights(){
         appendIt.style.color = "white"
         appendIt.style.minHeight = "30px"
         appendIt.style.borderRadius = "15px"
-        appendIt.style.zIndex = "1111 !important"
+        appendIt.style.zIndex = "1111 "
         showAt(link,appendIt)
     }
 }
@@ -444,7 +448,7 @@ function  addLabelHighlights(){ //should we leave out the hidden input areas?
         appendIt.style.height = "30px"
         appendIt.style.minWidth = "30px"
         appendIt.style.maxWidth = "100px"
-        appendIt.style.zIndex = "1111 !important"
+        appendIt.style.zIndex = "1111 "
         appendIt.classList.add("appendices")
 
         if(specificlabel.item(0) === null){
@@ -478,7 +482,7 @@ function  addLabelHighlights(){ //should we leave out the hidden input areas?
                 x.style.height = "30px"
                 x.style.minWidth = "30px"
                 x.style.maxWidth = "100px"
-                x.style.zIndex = "1111 !important"
+                x.style.zIndex = "1111"
                 x.classList.add("appendices")
                 x.for = el.id
                 x.textContent = appendIt.textContent

@@ -25,7 +25,7 @@ const g123Grades = "    <button id=\"g_1\" class='g123_button'>1</button>\n" +
     "    <button id=\"g_3\" class='g123_button'>3</button>"
 
 chrome.storage.local.get("currQuestion", (e)=>{
-    if(e){
+    if(e["currQuestion"]){
         currQuestion = e["currQuestion"]
         document.getElementById(currQuestion.toString()).click()
     }
@@ -34,7 +34,7 @@ chrome.storage.local.get("currQuestion", (e)=>{
     }
 });
 chrome.storage.local.get("highlightedTF", (e)=>{
-    if(e){
+    if(e["highlightedTF"]){
         highlightedTF = e["highlightedTF"]
     }
     else{
@@ -42,7 +42,7 @@ chrome.storage.local.get("highlightedTF", (e)=>{
     }
 });
 chrome.storage.local.get("highlightedQ", (e)=>{
-    if(e){
+    if(e["highlightedQ"]){
         highlightedQ = e["highlightedQ"]
     }
     else{
@@ -50,10 +50,22 @@ chrome.storage.local.get("highlightedQ", (e)=>{
     }
 });
 
+for(let i = 1; i<16; i++){
+    chrome.storage.local.get([i.toString()], e => {
+        if(e[i.toString()]){
+            addHighlight(i)
+        }
+
+    })
+
+}
 
 b1.addEventListener("click", (e => {
+    removeHighlight(currQuestion);
     currQuestion = 1
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     getCurrentTab().then(tab => {
@@ -66,8 +78,11 @@ b1.addEventListener("click", (e => {
 
 
 b2.addEventListener("click", (e => {
+    removeHighlight(currQuestion);
     currQuestion = 2
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
 
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
@@ -79,8 +94,11 @@ b2.addEventListener("click", (e => {
 
 
 b3.addEventListener("click", (e => {
+    removeHighlight(currQuestion);
     currQuestion = 3
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = "Is the focus visible when navigating by tab key? (the site has not been altered) <br> <button id='highlighted'></button>"
@@ -94,8 +112,11 @@ b3.addEventListener("click", (e => {
 }))
 
 b4.addEventListener("click", (e => {
+    removeHighlight(currQuestion);
     currQuestion = 4
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = "Are all parts of the site usable by keyboard? (without mouse) <br> <button id='highlighted'></button>"
@@ -113,8 +134,11 @@ b4.addEventListener("click", (e => {
 
 b5.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 5
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").textContent = "Do moving content and animations have a pause button? (the site has not been altered)"
@@ -124,8 +148,11 @@ b5.addEventListener("click", (e => {
 
 b6.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 6
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = " Is there a clear visual distinction between link texts and normal text? (Note that these highlights are meant only to help the grader " +
@@ -140,8 +167,11 @@ b6.addEventListener("click", (e => {
 }))
 b7.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 7
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = " Are the link texts meaningful? (Note that these highlights are meant only to help the grader " +
@@ -156,8 +186,11 @@ b7.addEventListener("click", (e => {
 }))
 b8.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 8
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = " Do all images have a textual alternative? <br> <button id='highlighted'></button>"
@@ -172,8 +205,11 @@ b8.addEventListener("click", (e => {
 
 b9.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 9
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = "Are videos subtitled? <br> <button id='highlighted'></button>"
@@ -188,8 +224,11 @@ b9.addEventListener("click", (e => {
 
 b10.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 10
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = "Is there sufficient contrast between the colour of the text and the background colour? <br> <button id='highlighted'></button>"
@@ -204,8 +243,11 @@ b10.addEventListener("click", (e => {
 
 b11.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 11
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = "Are all headings and subtitles correctly marked with HTML? <br> <button id='highlighted'></button>"
@@ -220,8 +262,11 @@ b11.addEventListener("click", (e => {
 
 b12.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 12
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = " Are all lists correctly marked with HTML? <br> <button id='highlighted'></button>"
@@ -236,8 +281,11 @@ b12.addEventListener("click", (e => {
 
 b13.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 13
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = " Are form fields linked to their labels? <br> <button id='highlighted'></button>"
@@ -252,8 +300,11 @@ b13.addEventListener("click", (e => {
 
 b14.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
     currQuestion = 14
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = " If you make a mistake when completing a form, do you get textual help? <br> <button id='highlighted'></button>"
@@ -268,8 +319,13 @@ b14.addEventListener("click", (e => {
 
 b15.addEventListener("click", (e => {
 
+    removeHighlight(currQuestion);
+
+
     currQuestion = 15
-    removeH()
+    addHighlight(currQuestion);
+    removeH();
+
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
     document.getElementById("content").innerHTML = "Do the contents reflow properly when the website is zoomed in up until 400%? <br>" //<button id='highlighted'></button>"
@@ -330,6 +386,17 @@ function removeH(){
         chrome.storage.local.set({"highlightedQ": currQuestion}, function (){});
         chrome.storage.local.set({"highlightedTF": false}, function (){});
     }
+}
+
+function addHighlight(n){
+    document.getElementById(n.toString()).classList.add("highlightnav")
+}
+function removeHighlight(n){
+    chrome.storage.local.get([n.toString()], (r) => {
+        if(!r[n.toString()] && n !== currQuestion){
+            document.getElementById(n.toString()).classList.remove("highlightnav")
+        }
+    })
 }
 
 function retlang(lang){
@@ -442,6 +509,7 @@ function clearQuestion(){
 document.getElementById("clearallstorage").addEventListener("click", (e) => clearAllLocalStorage())
 function clearAllLocalStorage(){
     chrome.storage.local.clear(()=>{updateButtonColors()})
+    document.querySelectorAll(".highlightnav").forEach(e => e.classList.remove("highlightnav"))
 }
 
 function writeToStorageSpace(str){
