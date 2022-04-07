@@ -469,6 +469,7 @@ function updateButtonColors(){
                     return r[currqstr] !== value
                 })
                 for (elem of filtered){
+                    document.getElementById(elem).style.color = "#5B616A"
                     document.getElementById(elem).style.backgroundColor = "white"
                 }
             }
@@ -477,21 +478,25 @@ function updateButtonColors(){
                     return r[currqstr] !== value
                 })
                 for (elem of filtered){
+                    document.getElementById(elem).style.color = "#5B616A"
                     document.getElementById(elem).style.backgroundColor = "white"
                 }
             }
             document.getElementById(r[currQuestion.toString()]).style.backgroundColor = "green"
+            document.getElementById(r[currQuestion.toString()]).style.color = "white"
         }
         else{
             let ynnaclass = document.getElementsByClassName("ynna_button")
             let g123class = document.getElementsByClassName("g123_button")
             if(ynnaclass){
                 for (elem of ynnaclass){
+                    document.getElementById(elem).style.color = "#5B616A"
                     elem.style.backgroundColor = "white"
                 }
             }
             else if(g123class){
                 for (elem of g123class){
+                    document.getElementById(elem).style.color = "#5B616A"
                     elem.style.backgroundColor = "white"
                 }
             }
