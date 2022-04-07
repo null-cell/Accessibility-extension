@@ -192,7 +192,7 @@ b10.addEventListener("click", (e => {
     removeH()
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
     document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = "#TOFINISH Is there sufficient contrast between the colour of the text and the background colour? <br> <button id='highlighted'></button>"
+    document.getElementById("content").innerHTML = "Is there sufficient contrast between the colour of the text and the background colour? <br> <button id='highlighted'></button>"
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setHoverHighlights", changeHighlightText)
