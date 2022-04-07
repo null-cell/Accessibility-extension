@@ -470,7 +470,7 @@ function updateButtonColors(){
                 })
                 for (elem of filtered){
                     document.getElementById(elem).style.color = "#5B616A"
-                    document.getElementById(elem).style.backgroundColor = "#5B616A"
+                    document.getElementById(elem).style.backgroundColor = " #FCF7F8"
                 }
             }
             else if(g123_arr.includes(r[currqstr])){
@@ -479,11 +479,11 @@ function updateButtonColors(){
                 })
                 for (elem of filtered){
                     document.getElementById(elem).style.color = "#5B616A"
-                    document.getElementById(elem).style.backgroundColor = "#5B616A"
+                    document.getElementById(elem).style.backgroundColor = " #FCF7F8"
                 }
             }
             document.getElementById(r[currQuestion.toString()]).style.backgroundColor = "green"
-            document.getElementById(r[currQuestion.toString()]).style.color = "#5B616A"
+            document.getElementById(r[currQuestion.toString()]).style.color = " #FCF7F8"
         }
         else{
             let ynnaclass = document.getElementsByClassName("ynna_button")
@@ -491,13 +491,13 @@ function updateButtonColors(){
             if(ynnaclass){
                 for (elem of ynnaclass){
                     document.getElementById(elem).style.color = "#5B616A"
-                    elem.style.backgroundColor = "#5B616A"
+                    elem.style.backgroundColor = " #FCF7F8"
                 }
             }
             else if(g123class){
                 for (elem of g123class){
                     document.getElementById(elem).style.color = "#5B616A"
-                    elem.style.backgroundColor = "#5B616A"
+                    elem.style.backgroundColor = " #FCF7F8"
                 }
             }
         }
