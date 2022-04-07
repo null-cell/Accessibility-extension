@@ -17,10 +17,10 @@ const b15 = document.getElementById("15")
 let highlightedQ = -1
 let highlightedTF = false
 
-const ynnaGrades = "    <button id=\"g_yes\" class='ynna_button'>Yes</button>\n" +
+const ynnaGrades = "<div class='gradeTitle'>Grade: </div>  <button id=\"g_yes\" class='ynna_button'>Yes</button>\n" +
     "    <button id=\"g_no\" class='ynna_button'>No</button>\n" +
     "    <button id=\"g_na\" class='ynna_button'>Not applicable</button>"
-const g123Grades = "    <button id=\"g_1\" class='g123_button'>1</button>\n" +
+const g123Grades = " <div class='gradeTitle'>Grade: </div>  <button id=\"g_1\" class='g123_button'>1</button>\n" +
     "    <button id=\"g_2\" class='g123_button'>2</button>\n" +
     "    <button id=\"g_3\" class='g123_button'>3</button>"
 
@@ -50,7 +50,7 @@ chrome.storage.local.get("highlightedQ", (e)=>{
     }
 });
 
-for(let i = 1; i<16; i++){
+for(let i = 1; i<17; i++){
     chrome.storage.local.get([i.toString()], e => {
         if(e[i.toString()]){
             addHighlight(i)
@@ -67,9 +67,13 @@ b1.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
+    document.getElementById("currQuestion").textContent = currQuestion+". "
     getCurrentTab().then(tab => {
-        document.getElementById("content").innerHTML = '<p>Is the page title meaningful: <span style="background-color: red">'+ tab.title + '</span></p>';
+        document.getElementById("currQuestion").textContent += 'Is the page title meaningful: ';
+        document.getElementById("content").innerHTML = '<h2 style="background-color: #ff666d">'+tab.title+'</h2>'
+        document.getElementById("tooltips").textContent = "The page title is displayed as the title of the browser tab. " +
+            "It is also displayed and highlighted below the question."
+
         setYNNAGrades(currQuestion.toString())
         updateButtonColors()
     })
@@ -85,8 +89,9 @@ b2.addEventListener("click", (e => {
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
 
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    sendMessage("getLang", retlang)
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+
+    sendMessage("getLang", retlang) //retlang changes the html of extension popup, because we're waiting on the message of the main script
     setYNNAGrades(currQuestion.toString())
     updateButtonColors()
 }))
@@ -100,8 +105,11 @@ b3.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = "Is the focus visible when navigating by tab key? (the site has not been altered) <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += "Is the focus visible when navigating by tab key?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "Try using the tab key on the website and identify its focus visibility. The site has not been altered, however if you get lost," +
+        " you can toggle the highlight to show you where your focus currently is. In order to not change the focused element, close the extension by clicking on its icon."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setFocusHighlights", changeHighlightText)
@@ -118,8 +126,11 @@ b4.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = "Are all parts of the site usable by keyboard? (without mouse) <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += "Are all parts of the site usable by keyboard? (without mouse)"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "All input fields, links and buttons have been highlighted. " +
+        "After the element has been interacted with, the highlight will change color to green."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setHighlights", changeHighlightText)
@@ -140,8 +151,10 @@ b5.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").textContent = "Do moving content and animations have a pause button? (the site has not been altered)"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += "Do moving content and animations have a pause button?"
+    document.getElementById("tooltips").textContent = "Find this type of content and check if a pause button is visible. " +
+        "There is no additional aid for this question (the site has not been altered)."
     setYNNAGrades(currQuestion.toString())
     updateButtonColors()
 }))
@@ -154,9 +167,11 @@ b6.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = " Is there a clear visual distinction between link texts and normal text? (Note that these highlights are meant only to help the grader " +
-        "find the links on the page, after which the grader should remove the highlight and inspect them manually) <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += " Is there a clear visual distinction between link texts and normal text?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "All links (!including image links, which you will have to disregard for this question) have an outline to inform you of them being links. These highlights are meant only to help you " +
+        "find the links on the page, after which you should remove the highlight and inspect them manually."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setLinkHighlights", changeHighlightText)
@@ -173,9 +188,11 @@ b7.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = " Are the link texts meaningful? (Note that these highlights are meant only to help the grader " +
-        "find the links on the page, after which the grader should remove the highlight and inspect them manually) <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += " Are the link texts meaningful?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "All links (!including image links, which you will have to disregard for this question) have an outline to inform you of them being links. These highlights are meant only to help you " +
+        "find the links on the page, after which you should remove the highlight and inspect them manually."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setLinkHighlights", changeHighlightText)
@@ -192,8 +209,11 @@ b8.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = " Do all images have a textual alternative? <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += " Do all images have a textual alternative?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "All images are outlined and have their alternative text shown over them. " +
+        "If they have no alternative text, it is replaced by !Missing text!. If the styling of the page makes the highlighting unreadable, please inspect the element manually."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setImageHighlights", changeHighlightText)
@@ -211,8 +231,11 @@ b9.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = "Are videos subtitled? <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += "Are videos subtitled?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "All videos are highlighted. " +
+        "Please manually check that they contain subtitles."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setVideoHighlights", changeHighlightText)
@@ -230,8 +253,11 @@ b10.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = "Is there sufficient contrast between the colour of the text and the background colour? <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += "Is there sufficient contrast between the colour of the text and the background colour?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "While having the 'highlight' popup open, the default click behaviour is prevented. On clicking on any text element, its font color and the first parent element with a background color will be shown in the popup on the left.  " +
+        "If the colors do not correspond to the desired ones, please use the color pickers to change them. Then click on the calculate contrast button and evaluate the results."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setHoverHighlights", changeHighlightText)
@@ -249,8 +275,11 @@ b11.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = "Are all headings and subtitles correctly marked with HTML? <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += "Are all headings and subtitles correctly marked with HTML?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "Upon clicking the highlight button, all headings and subtitles are noted with their respective tags (h1 - h6) and outlined. This is only to help you show where the marked elements are to grade their suitability, " +
+        "however you should still manually check, if there exist unmarked elements."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setHeadingHighlights", changeHighlightText)
@@ -268,8 +297,11 @@ b12.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = " Are all lists correctly marked with HTML? <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += " Are all lists correctly marked with HTML?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "All lists (ol and ul tags) have been noted with their respective tags. " +
+        "This is to help you locate the marked up lists and grade their suitability, however you should still browse the page to manually check for unmarked lists."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setListHighlights", changeHighlightText)
@@ -287,8 +319,11 @@ b13.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = " Are form fields linked to their labels? <br> <button id='highlighted'></button>"
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += " Are form fields linked to their labels?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "All labels and the input fields that are connected have been annotated with the same number. If the label is present in a different fashion than with for - id attribute connection between the label and the input, " +
+        "there will only be one annotation explaining the label style. Should there not be a label for the input element, this will be annotated aswell. Note that sometimes there are 'hidden' input elements that likely do not have a label, but the annotations will still show up."
     sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setLabelHighlights", changeHighlightText)
@@ -306,9 +341,12 @@ b14.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = " If you make a mistake when completing a form, do you get textual help? <br> <button id='highlighted'></button>"
-    sendMessage("getHighlightStatus", changeHighlightText)
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += " If you make a mistake when completing a form, do you get textual help?"
+    document.getElementById("content").innerHTML = "<button id='highlighted'></button>"
+    document.getElementById("tooltips").textContent = "All forms have been outlined for you to locate them easier. " +
+        "Please test behaviour on input mistakes manually."
+        sendMessage("getHighlightStatus", changeHighlightText)
     document.getElementById("highlighted").addEventListener("click", (e) => {
         sendMessage("setFormHighlights", changeHighlightText)
     })
@@ -327,12 +365,11 @@ b15.addEventListener("click", (e => {
     removeH();
 
     chrome.storage.local.set({"currQuestion": currQuestion}, function (){});
-    document.getElementById("currQuestion").textContent = "Current question is "+currQuestion
-    document.getElementById("content").innerHTML = "Do the contents reflow properly when the website is zoomed in up until 400%? <br>" //<button id='highlighted'></button>"
-    // sendMessage("getHighlightStatus", changeHighlightText)
-    // document.getElementById("highlighted").addEventListener("click", (e) => {
-    //     sendMessage("setZoomHighlights", changeHighlightText)
-    // })
+    document.getElementById("currQuestion").textContent = currQuestion+". "
+    document.getElementById("currQuestion").textContent += "Do the contents reflow properly when the website is zoomed in up until 400%?"
+    document.getElementById("tooltips").textContent = "Before assessing this question, please manually zoom in the page with the button combination of ctrl and + buttons until the zoom level is 400%. " +
+        "Scroll the page and review how the contents reflow."
+    sendMessage("getHighlightStatus", changeHighlightText)
 
     setYNNAGrades(currQuestion.toString())
     updateButtonColors()
@@ -364,6 +401,8 @@ async function getCurrentTab() {
 function changeHighlightText(high){
     if(high){
         document.getElementById("highlighted").textContent = "Highlighted"
+        document.getElementById("highlighted").classList.add("highlighton")
+
         highlightedQ = currQuestion
         highlightedTF = true
         chrome.storage.local.set({"highlightedQ": currQuestion}, function (){});
@@ -371,6 +410,8 @@ function changeHighlightText(high){
     }
     else{
         document.getElementById("highlighted").textContent = "Highlight"
+        document.getElementById("highlighted").classList.remove("highlighton")
+
         highlightedQ = currQuestion
         highlightedTF = false
         chrome.storage.local.set({"highlightedQ": currQuestion}, function (){});
@@ -379,6 +420,8 @@ function changeHighlightText(high){
 }
 
 function removeH(){
+    document.getElementById("content").innerHTML = ""
+    document.getElementById("tooltips").innerHTML = ""
     if(highlightedTF && (highlightedQ !== currQuestion)){
         sendMessage("removeAllHighlights", (e)=>{highlightedTF = e})
         highlightedQ = currQuestion
@@ -401,10 +444,16 @@ function removeHighlight(n){
 
 function retlang(lang){
     if(lang){
-        document.getElementById("content").innerHTML = '<p>Is the page\'s language correctly identified: <span style="background-color: red">' + lang+ '</span></p>';
+        document.getElementById("currQuestion").textContent += 'Is the page\'s language correctly identified:';
+        document.getElementById("content").innerHTML = '<h2 style="background-color: #ff666d">' + lang+ '</h2>'
+
+        document.getElementById("tooltips").textContent = "The defined language is displayed and highlighted below the question."
     }
     else{
-        document.getElementById("content").innerHTML = '<p>Is the page\'s language correctly identified: <span style="background-color: red"> "NO LANGUAGE DEFINED"</span></p>';
+        document.getElementById("currQuestion").textContent += 'Is the page\'s language correctly identified: ';
+        document.getElementById("content").innerHTML = '<h2 style="background-color: #ff666d"> "NO LANGUAGE DEFINED"</h2>'
+
+        document.getElementById("tooltips").textContent = "The defined language is displayed and highlighted below the question."
     }
 
 }

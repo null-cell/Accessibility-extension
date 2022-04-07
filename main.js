@@ -1,18 +1,18 @@
 let highlighted = false
 // document.body.addEventListener("mousemove", () => {getXYPosition()})
 function greenBorder () {
-    this.style.border = "3px solid green";
+    this.style.setProperty('border', "3px solid green", "important");;
 }
 
 function  addHighlights(){
     let links = document.querySelectorAll("a,button,input,area,textarea,map,track,video,embed,iframe,datalist,fieldset,details,dialog,summary")
     for (link of links) {
         if(link.style.border === "0px solid green"){
-            link.style.border = "3px solid green";
+            link.style.setProperty('border', "3px solid green", "important");;
         }
 
         else{
-            link.style.border = "3px solid red"
+            link.style.setProperty('border', "3px solid red", "important");
             link.addEventListener("focus", greenBorder);
         }
 
@@ -36,7 +36,7 @@ function removeHighlights(){
 }
 function redBorderON () {
     this.style.counterReset = this.style.border
-    this.style.border = "8px solid red"
+    this.style.setProperty("border", "8px solid red", "important")
 
 
 }
@@ -82,14 +82,10 @@ function removeAll(){
 function  addLinkHighlights(){
     let links = document.querySelectorAll("a")
     for (link of links) {
-        if(link.style.border === "0px solid green"){
-            link.style.border = "3px solid green";
-        }
+        link.style.counterReset = link.style.border
+        link.style.setProperty('border', "3px solid red", "important");;
 
-        else{
-            link.style.border = "3px solid red"
-            link.addEventListener("focus", greenBorder);
-        }
+
 
     }
 
@@ -97,13 +93,8 @@ function  addLinkHighlights(){
 function removeLinkHighlights(){
     let links = document.querySelectorAll("a")
     for (link of links) {
-        link.removeEventListener("focus", greenBorder)
-        if(link.style.border === "3px solid green"){
-            link.style.border = "0px solid green"
-        }
-        else{
-            link.style.border = "0px solid red"
-        }
+        link.style.border = link.style.counterReset
+
 
 
     }
@@ -135,7 +126,7 @@ function  addImageHighlights(){
 
     for (let link of links) {
 
-        link.style.border = "3px solid red"
+        link.style.setProperty('border', "3px solid red", "important");
 
 
         let appendIt = document.createElement('p');
@@ -167,7 +158,7 @@ function removeImageHighlights(){
 }
 
 function  addVideoHighlights(){
-    document.querySelectorAll("video").forEach((el) => {el.style.border = "3px solid red"})
+    document.querySelectorAll("video").forEach((el) => {el.style.setProperty('border', "3px solid red", "important");})
 }
 function removeVideoHighlights(){
     document.querySelectorAll("video").forEach((el) => {el.style.border = "none"})
@@ -202,7 +193,11 @@ function calculateContrast(){
     // alert("https://webaim.org/resources/contrastchecker/?fcolor="+strcolors+"&bcolor="+strbgcolors+"&api");
     return fetch("https://webaim.org/resources/contrastchecker/?fcolor="+style+"&bcolor="+bgstyle+"&api")
         .then(async response => {
-            document.getElementById("calcresponse").innerText =  JSON.stringify( await response.json())
+            let x = JSON.stringify( await response.json())
+            // alert(x)
+            x = JSON.parse(x)
+
+            document.getElementById("calcresponse").textContent =  "Ratio: "+x["ratio"]+"\r\n AA: "+x["AA"].toString()+ "\r\n AALarge: "+x["AALarge"].toString()+"\r\n AAA: "+x["AAA"].toString()+ "\r\n AAALarge: "+x["AAALarge"].toString()
 
         })
 
@@ -313,9 +308,9 @@ function  addHoverHighlights(){
     appendIt.style.left = window.scrollX.toString()+"px "
     appendIt.style.top = (window.scrollY + 500).toString()+"px"
     appendIt.style.width = "400px"
-    appendIt.style.height = "250px"
+    appendIt.style.maxHeight = "280px"
     appendIt.style.overflowWrap = "anywhere"
-    appendIt.style.border = "3px solid red"
+    appendIt.style.setProperty('border', "3px solid red", "important");
     appendIt.id = "xy"
 
     let headerElem = document.createElement('div')
@@ -350,6 +345,7 @@ function  addHoverHighlights(){
     let calcresponse = document.createElement("div")
     calcresponse.innerText =""
     calcresponse.id = "calcresponse"
+    calcresponse.style.whiteSpace = "pre-line"
 
 
     appendIt.addEventListener("hover", el => el.preventDefault())
@@ -385,7 +381,7 @@ function removeHoverHighlights() {
 function  addHeadingHighlights(){
     let links = document.querySelectorAll("h1,h2,h3,h4,h5,h6")
     for (let link of links) {
-        link.style.border = "3px solid red"
+        link.style.setProperty('border', "3px solid red", "important");
         let appendIt = document.createElement('div');
         appendIt.textContent = link.tagName
         appendIt.style.backgroundColor = "red"
@@ -407,7 +403,7 @@ function removeHeadingHighlights(){
 function  addListHighlights(){
     let links = document.querySelectorAll("ol,ul")
     for (let link of links) {
-        link.style.border = "3px solid red"
+        link.style.setProperty('border', "3px solid red", "important");
         let appendIt = link.children[0].cloneNode(false); //now creates the tag as a li node in the list to consistently show up in all css frameworks
         if(!link.children[0].value) link.children[0].value = 1 //remove this if ol's start with not 1?
         appendIt.textContent = link.tagName
@@ -439,7 +435,7 @@ function  addLabelHighlights(){ //should we leave out the hidden input areas?
     let links = document.querySelectorAll("input,textarea")
     for (let [index, link] of links.entries()) {
         link.style.counterReset = link.style.border
-        link.style.border = "3px solid red"
+        link.style.setProperty('border', "3px solid red", "important");
         let appendIt = document.createElement('label');
         const selector = "label[for='" + link.id + "']"
         let specificlabel = document.querySelectorAll(selector)
@@ -502,7 +498,7 @@ function removeLabelHighlights(){
 function  addFormHighlights(){
     document.querySelectorAll("form").forEach((el) => {
         el.style.counterReset = el.style.border
-        el.style.border = "3px solid red"
+        el.style.setProperty('border', "3px solid red", "important");
     })
 }
 function removeFormHighlights(){
